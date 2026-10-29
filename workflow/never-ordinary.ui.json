@@ -1,0 +1,1139 @@
+{
+ "id": "18507e00-0d43-459b-b822-6c683c9d28a7",
+ "revision": 0,
+ "last_node_id": 17,
+ "last_link_id": 19,
+ "nodes": [
+  {
+   "id": 1,
+   "type": "UNETLoader",
+   "pos": [
+    40,
+    830
+   ],
+   "size": [
+    340,
+    110
+   ],
+   "flags": {},
+   "order": 0,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "unet_name",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "unet_name"
+     }
+    },
+    {
+     "name": "weight_dtype",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "weight_dtype"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "MODEL",
+     "type": "MODEL",
+     "links": [
+      1,
+      2
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Never Ordinary \u2014 MiniMax H3 engine (open weights, local)",
+   "properties": {
+    "Node name for S&R": "UNETLoader"
+   },
+   "widgets_values": [
+    "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+    "default"
+   ]
+  },
+  {
+   "id": 10,
+   "type": "BasicScheduler",
+   "pos": [
+    480,
+    980
+   ],
+   "size": [
+    300,
+    130
+   ],
+   "flags": {},
+   "order": 1,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "model",
+     "type": "MODEL",
+     "link": 1
+    },
+    {
+     "name": "scheduler",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "scheduler"
+     }
+    },
+    {
+     "name": "steps",
+     "type": "INT",
+     "link": null,
+     "widget": {
+      "name": "steps"
+     }
+    },
+    {
+     "name": "denoise",
+     "type": "FLOAT",
+     "link": null,
+     "widget": {
+      "name": "denoise"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "SIGMAS",
+     "type": "SIGMAS",
+     "links": [
+      7
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Scheduler (locked: simple, 20 steps)",
+   "properties": {
+    "Node name for S&R": "BasicScheduler"
+   },
+   "widgets_values": [
+    "simple",
+    20,
+    1.0
+   ]
+  },
+  {
+   "id": 11,
+   "type": "BasicGuider",
+   "pos": [
+    480,
+    1160
+   ],
+   "size": [
+    300,
+    90
+   ],
+   "flags": {},
+   "order": 2,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "model",
+     "type": "MODEL",
+     "link": 2
+    },
+    {
+     "name": "conditioning",
+     "type": "CONDITIONING",
+     "link": 3
+    }
+   ],
+   "outputs": [
+    {
+     "name": "GUIDER",
+     "type": "GUIDER",
+     "links": [
+      5
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Guider",
+   "properties": {
+    "Node name for S&R": "BasicGuider"
+   },
+   "widgets_values": []
+  },
+  {
+   "id": 12,
+   "type": "SamplerCustomAdvanced",
+   "pos": [
+    1060,
+    120
+   ],
+   "size": [
+    320,
+    200
+   ],
+   "flags": {},
+   "order": 3,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "noise",
+     "type": "NOISE",
+     "link": 4
+    },
+    {
+     "name": "guider",
+     "type": "GUIDER",
+     "link": 5
+    },
+    {
+     "name": "sampler",
+     "type": "SAMPLER",
+     "link": 6
+    },
+    {
+     "name": "sigmas",
+     "type": "SIGMAS",
+     "link": 7
+    },
+    {
+     "name": "latent_image",
+     "type": "LATENT",
+     "link": 8
+    }
+   ],
+   "outputs": [
+    {
+     "name": "output",
+     "type": "LATENT",
+     "links": [
+      9,
+      11
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "denoised_output",
+     "type": "LATENT",
+     "links": [],
+     "slot_index": 1
+    }
+   ],
+   "title": "Sampler",
+   "properties": {
+    "Node name for S&R": "SamplerCustomAdvanced"
+   },
+   "widgets_values": []
+  },
+  {
+   "id": 13,
+   "type": "VAEDecode",
+   "pos": [
+    1060,
+    400
+   ],
+   "size": [
+    300,
+    90
+   ],
+   "flags": {},
+   "order": 4,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "samples",
+     "type": "LATENT",
+     "link": 9
+    },
+    {
+     "name": "vae",
+     "type": "VAE",
+     "link": 10
+    }
+   ],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      13
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Decode video",
+   "properties": {
+    "Node name for S&R": "VAEDecode"
+   },
+   "widgets_values": []
+  },
+  {
+   "id": 14,
+   "type": "VAEDecodeAudio",
+   "pos": [
+    1060,
+    530
+   ],
+   "size": [
+    300,
+    90
+   ],
+   "flags": {},
+   "order": 5,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "samples",
+     "type": "LATENT",
+     "link": 11
+    },
+    {
+     "name": "vae",
+     "type": "VAE",
+     "link": 12
+    }
+   ],
+   "outputs": [
+    {
+     "name": "AUDIO",
+     "type": "AUDIO",
+     "links": [
+      14
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Decode audio",
+   "properties": {
+    "Node name for S&R": "VAEDecodeAudio"
+   },
+   "widgets_values": []
+  },
+  {
+   "id": 15,
+   "type": "CreateVideo",
+   "pos": [
+    1460,
+    160
+   ],
+   "size": [
+    300,
+    140
+   ],
+   "flags": {},
+   "order": 6,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "images",
+     "type": "IMAGE",
+     "link": 13
+    },
+    {
+     "name": "fps",
+     "type": "FLOAT",
+     "link": null,
+     "widget": {
+      "name": "fps"
+     }
+    },
+    {
+     "name": "audio",
+     "type": "AUDIO",
+     "link": 14
+    },
+    {
+     "name": "bit_depth",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "bit_depth"
+     }
+    },
+    {
+     "name": "color_space",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "color_space"
+     }
+    },
+    {
+     "name": "codec",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "codec"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "VIDEO",
+     "type": "VIDEO",
+     "links": [
+      15
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Create video (24 fps, with sound)",
+   "properties": {
+    "Node name for S&R": "CreateVideo"
+   },
+   "widgets_values": [
+    24.0,
+    "auto",
+    "sRGB",
+    "none"
+   ]
+  },
+  {
+   "id": 16,
+   "type": "SaveVideo",
+   "pos": [
+    1460,
+    360
+   ],
+   "size": [
+    340,
+    160
+   ],
+   "flags": {},
+   "order": 7,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "video",
+     "type": "VIDEO",
+     "link": 15
+    },
+    {
+     "name": "filename_prefix",
+     "type": "STRING",
+     "link": null,
+     "widget": {
+      "name": "filename_prefix"
+     }
+    },
+    {
+     "name": "format",
+     "type": "COMFY_DYNAMICCOMBO_V3",
+     "link": null,
+     "widget": {
+      "name": "format"
+     }
+    },
+    {
+     "name": "codec",
+     "type": "COMFY_DYNAMICCOMBO_V3",
+     "link": null,
+     "widget": {
+      "name": "codec"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "video",
+     "type": "VIDEO",
+     "links": [],
+     "slot_index": 0
+    }
+   ],
+   "title": "STEP 3 \u2014 your Never Ordinary video",
+   "properties": {
+    "Node name for S&R": "SaveVideo"
+   },
+   "widgets_values": [
+    "video/NeverOrdinary/adventure",
+    "auto",
+    "auto"
+   ]
+  },
+  {
+   "id": 17,
+   "type": "LoadImage",
+   "pos": [
+    40,
+    430
+   ],
+   "size": [
+    340,
+    320
+   ],
+   "flags": {},
+   "order": 8,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "image"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      19
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": [],
+     "slot_index": 1
+    }
+   ],
+   "title": "STEP 1b \u2014 the ordinary photo (outfit / context reference)",
+   "properties": {
+    "Node name for S&R": "LoadImage"
+   },
+   "widgets_values": [
+    "person_photo.png",
+    "image"
+   ]
+  },
+  {
+   "id": 3,
+   "type": "CLIPLoader",
+   "pos": [
+    40,
+    980
+   ],
+   "size": [
+    340,
+    130
+   ],
+   "flags": {},
+   "order": 9,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "clip_name",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "clip_name"
+     }
+    },
+    {
+     "name": "type",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "type"
+     }
+    },
+    {
+     "name": "device",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "device"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "CLIP",
+     "type": "CLIP",
+     "links": [
+      16
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Text encoder (Lemon3-VL, open weights)",
+   "properties": {
+    "Node name for S&R": "CLIPLoader"
+   },
+   "widgets_values": [
+    "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+    "minimax",
+    "default"
+   ]
+  },
+  {
+   "id": 4,
+   "type": "VAELoader",
+   "pos": [
+    40,
+    1150
+   ],
+   "size": [
+    340,
+    90
+   ],
+   "flags": {},
+   "order": 10,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "vae_name",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "vae_name"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "VAE",
+     "type": "VAE",
+     "links": [
+      10,
+      17
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Video VAE",
+   "properties": {
+    "Node name for S&R": "VAELoader"
+   },
+   "widgets_values": [
+    "minimax_h3_video_vae_fp16.safetensors"
+   ]
+  },
+  {
+   "id": 5,
+   "type": "VAELoader",
+   "pos": [
+    40,
+    1280
+   ],
+   "size": [
+    340,
+    90
+   ],
+   "flags": {},
+   "order": 11,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "vae_name",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "vae_name"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "VAE",
+     "type": "VAE",
+     "links": [
+      12
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Audio VAE (H3 generates sound with the video)",
+   "properties": {
+    "Node name for S&R": "VAELoader"
+   },
+   "widgets_values": [
+    "minimax_h3_audio_vae_fp32.safetensors"
+   ]
+  },
+  {
+   "id": 6,
+   "type": "LoadImage",
+   "pos": [
+    40,
+    60
+   ],
+   "size": [
+    340,
+    320
+   ],
+   "flags": {},
+   "order": 12,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "image",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "image"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "IMAGE",
+     "type": "IMAGE",
+     "links": [
+      18
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "MASK",
+     "type": "MASK",
+     "links": [],
+     "slot_index": 1
+    }
+   ],
+   "title": "STEP 1a \u2014 the person's CLOSE-UP (lead reference: sharp, front-facing)",
+   "properties": {
+    "Node name for S&R": "LoadImage"
+   },
+   "widgets_values": [
+    "person_closeup.png",
+    "image"
+   ]
+  },
+  {
+   "id": 7,
+   "type": "MiniMaxH3ReferenceToVideo",
+   "pos": [
+    480,
+    60
+   ],
+   "size": [
+    460,
+    560
+   ],
+   "flags": {},
+   "order": 13,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "clip",
+     "type": "CLIP",
+     "link": 16
+    },
+    {
+     "name": "prompt",
+     "type": "STRING",
+     "link": null,
+     "widget": {
+      "name": "prompt"
+     }
+    },
+    {
+     "name": "width",
+     "type": "INT",
+     "link": null,
+     "widget": {
+      "name": "width"
+     }
+    },
+    {
+     "name": "height",
+     "type": "INT",
+     "link": null,
+     "widget": {
+      "name": "height"
+     }
+    },
+    {
+     "name": "length",
+     "type": "INT",
+     "link": null,
+     "widget": {
+      "name": "length"
+     }
+    },
+    {
+     "name": "ref_image_size",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "ref_image_size"
+     }
+    },
+    {
+     "name": "vae",
+     "type": "VAE",
+     "link": 17
+    },
+    {
+     "name": "audio_vae",
+     "type": "VAE",
+     "link": null
+    },
+    {
+     "name": "ref_images.ref_image_0",
+     "type": "IMAGE",
+     "link": 18
+    },
+    {
+     "name": "ref_images.ref_image_1",
+     "type": "IMAGE",
+     "link": 19
+    },
+    {
+     "name": "ref_videos",
+     "type": "COMFY_AUTOGROW_V3",
+     "link": null,
+     "widget": {
+      "name": "ref_videos"
+     }
+    },
+    {
+     "name": "ref_video_audios",
+     "type": "COMFY_AUTOGROW_V3",
+     "link": null,
+     "widget": {
+      "name": "ref_video_audios"
+     }
+    },
+    {
+     "name": "ref_audios",
+     "type": "COMFY_AUTOGROW_V3",
+     "link": null,
+     "widget": {
+      "name": "ref_audios"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "positive",
+     "type": "CONDITIONING",
+     "links": [
+      3
+     ],
+     "slot_index": 0
+    },
+    {
+     "name": "LATENT",
+     "type": "LATENT",
+     "links": [
+      8
+     ],
+     "slot_index": 1
+    }
+   ],
+   "title": "STEP 2 \u2014 pick an Adventure Preset (or write your own scene). Quality defaults are LOCKED: ref size max, ~5s segments",
+   "properties": {
+    "Node name for S&R": "MiniMaxH3ReferenceToVideo"
+   },
+   "widgets_values": [
+    "<Picture 1> is a close-up photo of the person's face and <Picture 2> shows the SAME person - use them as the exact visual reference for the hero's identity and keep their face identical to them in every single frame. Describe the person's hair, glasses and facial hair here so the words match the close-up photo. Do not change, beautify or swap their face at any point. SCENE (Monster Wave preset \u2014 replace with any Adventure Preset or your own): Photorealistic action video, bright golden-hour ocean: the same person is surfing a giant turquoise wave on a surfboard, riding down the face of the wave toward the camera with arms out for balance, knees bent, whooping with joy, their face clearly visible and turned toward the camera the whole time, white spray flying behind them, sparkling water, epic scale, pure delight. Audio: crashing waves, wind, joyful shouting and laughter.",
+    896,
+    672,
+    124,
+    "max"
+   ]
+  },
+  {
+   "id": 8,
+   "type": "RandomNoise",
+   "pos": [
+    480,
+    700
+   ],
+   "size": [
+    300,
+    110
+   ],
+   "flags": {},
+   "order": 14,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "noise_seed",
+     "type": "INT",
+     "link": null,
+     "widget": {
+      "name": "noise_seed"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "NOISE",
+     "type": "NOISE",
+     "links": [
+      4
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Seed",
+   "properties": {
+    "Node name for S&R": "RandomNoise"
+   },
+   "widgets_values": [
+    771001,
+    "fixed"
+   ]
+  },
+  {
+   "id": 9,
+   "type": "KSamplerSelect",
+   "pos": [
+    480,
+    850
+   ],
+   "size": [
+    300,
+    90
+   ],
+   "flags": {},
+   "order": 15,
+   "mode": 0,
+   "inputs": [
+    {
+     "name": "sampler_name",
+     "type": "COMBO",
+     "link": null,
+     "widget": {
+      "name": "sampler_name"
+     }
+    }
+   ],
+   "outputs": [
+    {
+     "name": "SAMPLER",
+     "type": "SAMPLER",
+     "links": [
+      6
+     ],
+     "slot_index": 0
+    }
+   ],
+   "title": "Sampler (locked)",
+   "properties": {
+    "Node name for S&R": "KSamplerSelect"
+   },
+   "widgets_values": [
+    "res_multistep"
+   ]
+  }
+ ],
+ "links": [
+  [
+   1,
+   1,
+   0,
+   10,
+   0,
+   "MODEL"
+  ],
+  [
+   2,
+   1,
+   0,
+   11,
+   0,
+   "MODEL"
+  ],
+  [
+   3,
+   7,
+   0,
+   11,
+   1,
+   "CONDITIONING"
+  ],
+  [
+   4,
+   8,
+   0,
+   12,
+   0,
+   "NOISE"
+  ],
+  [
+   5,
+   11,
+   0,
+   12,
+   1,
+   "GUIDER"
+  ],
+  [
+   6,
+   9,
+   0,
+   12,
+   2,
+   "SAMPLER"
+  ],
+  [
+   7,
+   10,
+   0,
+   12,
+   3,
+   "SIGMAS"
+  ],
+  [
+   8,
+   7,
+   1,
+   12,
+   4,
+   "LATENT"
+  ],
+  [
+   9,
+   12,
+   0,
+   13,
+   0,
+   "LATENT"
+  ],
+  [
+   10,
+   4,
+   0,
+   13,
+   1,
+   "VAE"
+  ],
+  [
+   11,
+   12,
+   0,
+   14,
+   0,
+   "LATENT"
+  ],
+  [
+   12,
+   5,
+   0,
+   14,
+   1,
+   "VAE"
+  ],
+  [
+   13,
+   13,
+   0,
+   15,
+   0,
+   "IMAGE"
+  ],
+  [
+   14,
+   14,
+   0,
+   15,
+   2,
+   "AUDIO"
+  ],
+  [
+   15,
+   15,
+   0,
+   16,
+   0,
+   "VIDEO"
+  ],
+  [
+   16,
+   3,
+   0,
+   7,
+   0,
+   "CLIP"
+  ],
+  [
+   17,
+   4,
+   0,
+   7,
+   6,
+   "VAE"
+  ],
+  [
+   18,
+   6,
+   0,
+   7,
+   8,
+   "IMAGE"
+  ],
+  [
+   19,
+   17,
+   0,
+   7,
+   9,
+   "IMAGE"
+  ]
+ ],
+ "groups": [
+  {
+   "id": 1,
+   "title": "STEP 1 \u00b7 Your photos \u2014 close-up first, ordinary photo second",
+   "bounding": [
+    20,
+    20,
+    390,
+    770
+   ],
+   "color": "#3f789e",
+   "font_size": 24,
+   "flags": {}
+  },
+  {
+   "id": 2,
+   "title": "THE ENGINE \u00b7 MiniMax H3 open weights \u2014 locked, nothing to tune",
+   "bounding": [
+    20,
+    800,
+    390,
+    590
+   ],
+   "color": "#444444",
+   "font_size": 24,
+   "flags": {}
+  },
+  {
+   "id": 3,
+   "title": "STEP 2 \u00b7 The adventure \u2014 preset prompt lives in the big node",
+   "bounding": [
+    460,
+    20,
+    500,
+    640
+   ],
+   "color": "#8a6d3b",
+   "font_size": 24,
+   "flags": {}
+  },
+  {
+   "id": 4,
+   "title": "STEP 3 \u00b7 Your video comes out here",
+   "bounding": [
+    1030,
+    60,
+    800,
+    540
+   ],
+   "color": "#3b7a4f",
+   "font_size": 24,
+   "flags": {}
+  }
+ ],
+ "config": {},
+ "extra": {
+  "ds": {
+   "scale": 0.65,
+   "offset": [
+    80,
+    60
+   ]
+  }
+ },
+ "version": 0.4
+}

@@ -1,0 +1,229 @@
+{
+ "1": {
+  "_meta": {
+   "title": "Never Ordinary \u2014 MiniMax H3 engine (open weights, local)"
+  },
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "10": {
+  "_meta": {
+   "title": "Scheduler (locked: simple, 20 steps)"
+  },
+  "class_type": "BasicScheduler",
+  "inputs": {
+   "denoise": 1.0,
+   "model": [
+    "1",
+    0
+   ],
+   "scheduler": "simple",
+   "steps": 20
+  }
+ },
+ "11": {
+  "_meta": {
+   "title": "Guider"
+  },
+  "class_type": "BasicGuider",
+  "inputs": {
+   "conditioning": [
+    "7",
+    0
+   ],
+   "model": [
+    "1",
+    0
+   ]
+  }
+ },
+ "12": {
+  "_meta": {
+   "title": "Sampler"
+  },
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "guider": [
+    "11",
+    0
+   ],
+   "latent_image": [
+    "7",
+    1
+   ],
+   "noise": [
+    "8",
+    0
+   ],
+   "sampler": [
+    "9",
+    0
+   ],
+   "sigmas": [
+    "10",
+    0
+   ]
+  }
+ },
+ "13": {
+  "_meta": {
+   "title": "Decode video"
+  },
+  "class_type": "VAEDecode",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "4",
+    0
+   ]
+  }
+ },
+ "14": {
+  "_meta": {
+   "title": "Decode audio"
+  },
+  "class_type": "VAEDecodeAudio",
+  "inputs": {
+   "samples": [
+    "12",
+    0
+   ],
+   "vae": [
+    "5",
+    0
+   ]
+  }
+ },
+ "15": {
+  "_meta": {
+   "title": "Create video (24 fps, with sound)"
+  },
+  "class_type": "CreateVideo",
+  "inputs": {
+   "audio": [
+    "14",
+    0
+   ],
+   "fps": 24.0,
+   "images": [
+    "13",
+    0
+   ]
+  }
+ },
+ "16": {
+  "_meta": {
+   "title": "STEP 3 \u2014 your Never Ordinary video"
+  },
+  "class_type": "SaveVideo",
+  "inputs": {
+   "codec": "auto",
+   "filename_prefix": "video/NeverOrdinary/adventure",
+   "format": "auto",
+   "video": [
+    "15",
+    0
+   ]
+  }
+ },
+ "17": {
+  "_meta": {
+   "title": "STEP 1b \u2014 the ordinary photo (outfit / context reference)"
+  },
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "person_photo.png"
+  }
+ },
+ "3": {
+  "_meta": {
+   "title": "Text encoder (Lemon3-VL, open weights)"
+  },
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+   "device": "default",
+   "type": "minimax"
+  }
+ },
+ "4": {
+  "_meta": {
+   "title": "Video VAE"
+  },
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "5": {
+  "_meta": {
+   "title": "Audio VAE (H3 generates sound with the video)"
+  },
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+  }
+ },
+ "6": {
+  "_meta": {
+   "title": "STEP 1a \u2014 the person's CLOSE-UP (lead reference: sharp, front-facing)"
+  },
+  "class_type": "LoadImage",
+  "inputs": {
+   "image": "person_closeup.png"
+  }
+ },
+ "7": {
+  "_meta": {
+   "title": "STEP 2 \u2014 pick an Adventure Preset (or write your own scene). Quality defaults are LOCKED: ref size max, ~5s segments"
+  },
+  "class_type": "MiniMaxH3ReferenceToVideo",
+  "inputs": {
+   "clip": [
+    "3",
+    0
+   ],
+   "height": 672,
+   "length": 124,
+   "prompt": "<Picture 1> is a close-up photo of the person's face and <Picture 2> shows the SAME person - use them as the exact visual reference for the hero's identity and keep their face identical to them in every single frame. Describe the person's hair, glasses and facial hair here so the words match the close-up photo. Do not change, beautify or swap their face at any point. SCENE (Monster Wave preset \u2014 replace with any Adventure Preset or your own): Photorealistic action video, bright golden-hour ocean: the same person is surfing a giant turquoise wave on a surfboard, riding down the face of the wave toward the camera with arms out for balance, knees bent, whooping with joy, their face clearly visible and turned toward the camera the whole time, white spray flying behind them, sparkling water, epic scale, pure delight. Audio: crashing waves, wind, joyful shouting and laughter.",
+   "ref_image_size": "max",
+   "ref_images.ref_image_0": [
+    "6",
+    0
+   ],
+   "ref_images.ref_image_1": [
+    "17",
+    0
+   ],
+   "vae": [
+    "4",
+    0
+   ],
+   "width": 896
+  }
+ },
+ "8": {
+  "_meta": {
+   "title": "Seed"
+  },
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 771001
+  }
+ },
+ "9": {
+  "_meta": {
+   "title": "Sampler (locked)"
+  },
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "res_multistep"
+  }
+ }
+}
